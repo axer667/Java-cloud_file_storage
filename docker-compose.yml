@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  cloudservice:
+    container_name: cloudservice
+    build:
+      context: .
+    ports:
+      - "5500:5500"
+    depends_on:
+      - cloudservice_database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://cloudservice_database:5432/cloudservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_URL: jdbc:postgresql://cloudservice_database:5432/cloudservice
+
+  cloudservice_database:
+    container_name: cloudservice_database
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: cloudservice
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  cloudstorage-frontend:
+    container_name: cloudstorage-front
+    restart: always
+    build:
+      context: ./frontend
+    ports:
+      - "8080:8080"
